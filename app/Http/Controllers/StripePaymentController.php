@@ -19,7 +19,7 @@ class StripePaymentController extends Controller
         return view('stripe');
     }
 
-    /**
+   /**
      * success response method.
      *
      * @return \Illuminate\Http\Response
@@ -55,10 +55,11 @@ class StripePaymentController extends Controller
 
     public function handleWebhook(Request $request)
     {
+        Session::put('webhook', 'Webhook called');
         // Retrieve the request's body and verify the signature
         $payload = $request->getContent();
         $sigHeader = $request->header('Stripe-Signature');
-        $endpointSecret = 'your_webhook_secret_key'; // Replace with your actual webhook secret key
+        $endpointSecret = 'whsec_VqrVEtD4GwC3AnEyI2Nozer8qsNORBoV'; // Replace with your actual webhook secret key
 
         try {
             $event = \Stripe\Webhook::constructEvent($payload, $sigHeader, $endpointSecret);
@@ -71,15 +72,16 @@ class StripePaymentController extends Controller
                 case 'payment_intent.failed':
                     // Handle failed payment intent
                     break;
-                    // Add more cases for other event types you want to handle
+                // Add more cases for other event types you want to handle
                 default:
                     // Unexpected event type
                     break;
             }
 
-            return new Response('Webhook handled successfully', 200);
+            return new Response('Yes!! Webhook handled successfully', 200);
         } catch (\Exception $e) {
             return new Response('Webhook error: ' . $e->getMessage(), 400);
         }
     }
+
 }
